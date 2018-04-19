@@ -5,8 +5,11 @@ from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 from paypal.standard.ipn.forms import PayPalIPNForm
 from paypal.standard.ipn.models import PayPalIPN
- 
- 
+
+import logging
+
+logger = logging.getLogger(__name__)
+
 @require_POST
 @csrf_exempt
 def ipn(request, item_check_callable=None):
@@ -40,7 +43,7 @@ def ipn(request, item_check_callable=None):
             flag = "Exception while processing. (%s)" % e
     else:
         flag = "Invalid form. (%s)" % form.errors
- 
+
     if ipn_obj is None:
         ipn_obj = PayPalIPN()
     
@@ -58,4 +61,8 @@ def ipn(request, item_check_callable=None):
             ipn_obj.verify(item_check_callable)
 
     ipn_obj.save()
+    if flag and 'Invalid form' in flag:
+        logger.error(
+            'IPN#{0} form validation error: {1}'.format(ipn_obj.pk, flag)
+        )
     return HttpResponse("OKAY")
