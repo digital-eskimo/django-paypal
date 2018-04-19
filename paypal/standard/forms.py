@@ -12,11 +12,23 @@ from paypal.standard.conf import (
 # 20:18:05 Jan 30, 2009 PST - PST timezone support not included out of the box.
 # PAYPAL_DATE_FORMAT = ("%H:%M:%S %b. %d, %Y PST", "%H:%M:%S %b %d, %Y PST",)
 # PayPal dates have been spotted in the wild with these formats, beware!
-PAYPAL_DATE_FORMAT = (
-    "%H:%M:%S %b. %d, %Y PST",
-    "%H:%M:%S %b. %d, %Y PDT",
-    "%H:%M:%S %b %d, %Y PST",
-    "%H:%M:%S %b %d, %Y PDT",)
+PAYPAL_DATE_FORMATS = (
+    "%H:%M:%S %b. %d, %Y %Z",
+    "%H:%M:%S %b %d %Y %Z",
+    "%H:%M:%S %b %d, %Y %Z",
+    "%H:%M:%S %b. %d %Y %Z",
+    "%H:%M:%S %b %d, %Y %Z%z",
+    "%H:%M:%S %b %d, %Y %Z+00:00", # WTF PayPal?
+    # real-life example: '12%3A43%3A30+Apr+04%2C+2018+GMT%2B00%3A00'
+)
+
+# https://bugs.python.org/issue22377 !
+TIMEZONES = ('PDT', 'PST', 'GMT') # others?
+PAYPAL_DATE_FORMAT = list(PAYPAL_DATE_FORMATS)
+for timezone in TIMEZONES:
+    PAYPAL_DATE_FORMAT += [
+        f.replace('%Z', timezone) for f in PAYPAL_DATE_FORMATS
+    ]
 
 class PayPalPaymentsForm(forms.Form):
     """
