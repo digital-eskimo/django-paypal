@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import urllib2
+import requests
 from ..models import PayPalStandardBase
 from . import signals
 
@@ -14,8 +14,9 @@ class PayPalIPN(PayPalStandardBase):
 
     def _postback(self):
         """Perform PayPal Postback validation."""
-        return urllib2.urlopen(
-            self.get_endpoint(), "cmd=_notify-validate&%s" % self.query).read()
+        return requests.get(
+            self.get_endpoint(), "cmd=_notify-validate&%s" % self.query
+        ).content
 
     def _verify_postback(self):
         if self.response != "VERIFIED":

@@ -5,7 +5,7 @@ import datetime
 import pprint
 import time
 import urllib
-import urllib2
+import requests
 
 from django.conf import settings
 from django.forms.models import fields_for_model
@@ -196,7 +196,7 @@ class PayPalWPP(object):
         """
         try:
             nvp = self.api_call('ManageRecurringPaymentsProfileStatus', params)
-        except PayPalFailure, e:
+        except PayPalFailure as e:
             if not(fail_silently and e.message == (
                 'Invalid profile status for cancel action; '
                 'profile should be active or suspended')):
@@ -252,9 +252,9 @@ class PayPalWPP(object):
         response_params = self._parse_response(response)
 
         if getattr(settings, 'PAYPAL_DEBUG', settings.DEBUG):
-            print 'PayPal Request:'
+            print('PayPal Request:')
             pprint.pprint(defaults)
-            print '\nPayPal Response:'
+            print('\nPayPal Response:')
             pprint.pprint(response_params)
 
         # Gather all NVP parameters to pass to a new instance.
@@ -278,7 +278,7 @@ class PayPalWPP(object):
 
     def _request(self, data):
         """Moved out to make testing easier."""
-        return urllib2.urlopen(self.endpoint, data).read()
+        return requests.get(self.endpoint, data).content
 
     def _check_and_update_params(self, required, params):
         """
