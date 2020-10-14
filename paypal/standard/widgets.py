@@ -3,7 +3,7 @@
 from django import forms
 from django.forms.utils import flatatt
 from django.utils.safestring import mark_safe
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 
 
 class ValueHiddenInput(forms.HiddenInput):
@@ -27,5 +27,5 @@ class ReservedValueHiddenInput(ValueHiddenInput):
             value = ''
         final_attrs = self.build_attrs(attrs, type=self.input_type)
         if value != '':
-            final_attrs['value'] = force_unicode(value)
+            final_attrs['value'] = force_text(value)
         return mark_safe(u'<input%s />' % flatatt(final_attrs))
