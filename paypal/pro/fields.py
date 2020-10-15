@@ -33,22 +33,22 @@ class CreditCardExpiryWidget(forms.MultiWidget):
     def decompress(self, value):
         if isinstance(value, date):
             return [value.month, value.year]
-        elif isinstance(value, basestring):
+        elif isinstance(value, str):
             return [value[0:2], value[2:]]
         else:
             return [None, None]
 
     def format_output(self, rendered_widgets):
-        html = u' / '.join(rendered_widgets)
-        return u'<span style="white-space: nowrap">%s</span>' % html
+        html = ' / '.join(rendered_widgets)
+        return '<span style="white-space: nowrap">%s</span>' % html
 
 class CreditCardExpiryField(forms.MultiValueField):
-    EXP_MONTH = [(x, x) for x in xrange(1, 13)]
-    EXP_YEAR = [(x, x) for x in xrange(date.today().year, date.today().year + 15)]
+    EXP_MONTH = [(x, x) for x in range(1, 13)]
+    EXP_YEAR = [(x, x) for x in range(date.today().year, date.today().year + 15)]
 
     default_error_messages = {
-        'invalid_month': u'Enter a valid month.',
-        'invalid_year': u'Enter a valid year.',
+        'invalid_month': 'Enter a valid month.',
+        'invalid_year': 'Enter a valid year.',
     }
 
     def __init__(self, *args, **kwargs):

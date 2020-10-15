@@ -57,7 +57,7 @@ class CreditCard(object):
 
     def get_type(self):
         """Return the type if it matches one of the cards."""
-        for card, pattern in CARDS.iteritems():
+        for card, pattern in CARDS.items():
             if pattern.match(self.number):
                 return card
         return None

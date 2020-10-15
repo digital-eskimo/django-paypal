@@ -103,7 +103,7 @@ class IPNTest(TestCase):
 
     def test_invalid_payment_status(self):
         update = {"payment_status": "Failed"}
-        flag_info = u"Invalid payment_status. (Failed)"
+        flag_info = "Invalid payment_status. (Failed)"
         self.assertFlagged(update, flag_info)
         
     def test_vaid_payment_status_cancelled(self):

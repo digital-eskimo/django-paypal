@@ -73,7 +73,7 @@ class PayPalNVP(Model):
 
         # No storing credit card info.
         query_data = dict(
-            (k,v) for k, v in paypal_request.iteritems() if
+            (k,v) for k, v in paypal_request.items() if
             k not in self.RESTRICTED_FIELDS)
         self.query = urlencode(query_data)
         self.response = urlencode(paypal_response)

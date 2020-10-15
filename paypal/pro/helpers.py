@@ -4,7 +4,7 @@
 import datetime
 import pprint
 import time
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import requests
 
 from django.conf import settings
@@ -23,7 +23,7 @@ VERSION = 74.0
 BASE_PARAMS = dict(USER=USER , PWD=PASSWORD, SIGNATURE=SIGNATURE, VERSION=VERSION)
 ENDPOINT = "https://api-3t.paypal.com/nvp"
 SANDBOX_ENDPOINT = "https://api-3t.sandbox.paypal.com/nvp"
-NVP_FIELDS = fields_for_model(PayPalNVP).keys()
+NVP_FIELDS = list(fields_for_model(PayPalNVP).keys())
 # PayPal Edit IPN URL:
 # https://www.sandbox.paypal.com/us/cgi-bin/webscr?cmd=_profile-ipn-notify
 EXPRESS_ENDPOINT = "https://www.paypal.com/webscr?cmd=_express-checkout&%s"
@@ -229,7 +229,7 @@ class PayPalWPP(object):
         REMOVE = (
             'BILLINGFREQUENCY', 'BILLINGPERIOD', 'PROFILESTARTDATE', 'DESC')
 
-        for k in params.keys():
+        for k in list(params.keys()):
             if k in REMOVE:
                 del params[k]
 
@@ -262,7 +262,7 @@ class PayPalWPP(object):
         merge = {}
         merge.update(defaults)
         merge.update(response_params)
-        for key, value in merge.items():
+        for key, value in list(merge.items()):
             if key.lower() in NVP_FIELDS:
                 nvp_params[str(key.lower())] = value
 
@@ -290,12 +290,12 @@ class PayPalWPP(object):
                 raise PayPalError("Missing required param: %s" % r)
 
         # Upper case all the parameters for PayPal.
-        return (dict((k.upper(), v) for k, v in params.iteritems()))
+        return (dict((k.upper(), v) for k, v in params.items()))
 
     def _parse_response(self, response):
         """Turn the PayPal response into a dict"""
         response_tokens = {}
         for kv in response.split('&'):
             key, value = kv.split("=")
-            response_tokens[key] = urllib.unquote(value)
+            response_tokens[key] = urllib.parse.unquote(value)
         return response_tokens

@@ -6,7 +6,7 @@ from . import signals
 
 class PayPalIPN(PayPalStandardBase):
     """Logs PayPal IPN interactions."""
-    format = u"<IPN: %s %s>"
+    format = "<IPN: %s %s>"
 
     class Meta:
         db_table = "paypal_ipn"

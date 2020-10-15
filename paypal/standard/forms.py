@@ -114,14 +114,14 @@ class PayPalPaymentsForm(forms.Form):
         self.button_type = button_type
 
     def render(self):
-        return mark_safe(u"""<form action="%s" method="post">
+        return mark_safe("""<form action="%s" method="post">
     %s
     <input type="image" src="%s" border="0" name="submit" alt="Buy it Now" />
 </form>""" % (POSTBACK_ENDPOINT, self.as_p(), self.get_image()))
 
 
     def sandbox(self):
-        return mark_safe(u"""<form action="%s" method="post">
+        return mark_safe("""<form action="%s" method="post">
     %s
     <input type="image" src="%s" border="0" name="submit" alt="Buy it Now" />
 </form>""" % (SANDBOX_POSTBACK_ENDPOINT, self.as_p(), self.get_image()))
@@ -166,7 +166,7 @@ class PayPalEncryptedPaymentsForm(PayPalPaymentsForm):
 
         # Iterate through the fields and pull out the ones that have a value.
         plaintext = 'cert_id=%s\n' % CERT_ID
-        for name, field in self.fields.iteritems():
+        for name, field in self.fields.items():
             value = None
             if name in self.initial:
                 value = self.initial[name]
@@ -176,7 +176,7 @@ class PayPalEncryptedPaymentsForm(PayPalPaymentsForm):
                 # @@@ Make this less hackish and put it in the widget.
                 if name == "return_url":
                     name = "return"
-                plaintext += u'%s=%s\n' % (name, value)
+                plaintext += '%s=%s\n' % (name, value)
         plaintext = plaintext.encode('utf-8')
 
         # Begin crypto weirdness.
@@ -196,7 +196,7 @@ class PayPalEncryptedPaymentsForm(PayPalPaymentsForm):
         return out.read()
 
     def as_p(self):
-        return mark_safe(u"""
+        return mark_safe("""
 <input type="hidden" name="cmd" value="_s-xclick" />
 <input type="hidden" name="encrypted" value="%s" />
         """ % self._encrypt())
@@ -225,7 +225,7 @@ class PayPalSharedSecretEncryptedPaymentsForm(PayPalEncryptedPaymentsForm):
 
 def downcase_keys(d):
     downcased = {}
-    for key, value in d.iteritems():
+    for key, value in d.items():
         downcased[key.lower()] = value
     return downcased
 

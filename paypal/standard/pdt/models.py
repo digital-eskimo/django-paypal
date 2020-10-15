@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from urllib import unquote_plus
-import urllib2
+from urllib.parse import unquote_plus
+import urllib.request, urllib.error, urllib.parse
 from django.db import models
 from django.conf import settings
 from django.http import QueryDict
@@ -23,7 +23,7 @@ except:
 
 
 class PayPalPDT(PayPalStandardBase):
-    format = u"<PDT: %s %s>"
+    format = "<PDT: %s %s>"
 
     amt = models.DecimalField(max_digits=64, decimal_places=2, default=0, blank=True, null=True)
     cm = models.CharField(max_length=255, blank=True)
@@ -44,7 +44,7 @@ class PayPalPDT(PayPalStandardBase):
         """
         postback_dict = dict(cmd="_notify-synch", at=IDENTITY_TOKEN, tx=self.tx)
         postback_params = urlencode(postback_dict)
-        return urllib2.urlopen(self.get_endpoint(), postback_params).read()
+        return urllib.request.urlopen(self.get_endpoint(), postback_params).read()
     
     def get_endpoint(self):
         """Use the sandbox when in DEBUG mode as we don't have a test_ipn variable in pdt."""
