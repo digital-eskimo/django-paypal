@@ -48,7 +48,7 @@ class PayPalNVP(Model):
     custom = models.CharField(max_length=255, blank=True)
 
     # Admin fields
-    user = models.ForeignKey(User, blank=True, null=True)
+    user = models.ForeignKey(User, models.CASCADE, blank=True, null=True)
     flag = models.BooleanField(default=False, blank=True)
     flag_code = models.CharField(max_length=32, blank=True)
     flag_info = models.TextField(blank=True)
