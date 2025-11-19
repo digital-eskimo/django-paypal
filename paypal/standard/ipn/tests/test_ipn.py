@@ -123,3 +123,12 @@ class IPNTest(TestCase):
         ipn_obj = PayPalIPN.objects.order_by('-created_at')[0]
         self.assertEqual(ipn_obj.flag, True)
         self.assertEqual(ipn_obj.flag_info, "Duplicate txn_id. (51403485VH153354B)")
+
+
+class PayPalIPNSetFlagTests(TestCase):
+    def test_set_flag_handles_non_ascii_bytes(self):
+        ipn = PayPalIPN(charset='windows-1252')
+        ipn.set_flag(b"Invalid postback. (\xc2\xa3)")
+
+        self.assertTrue(ipn.flag)
+        self.assertEqual(u"Invalid postback. (\u00a3)", ipn.flag_info)

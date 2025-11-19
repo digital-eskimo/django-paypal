@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 from django.conf import settings
+from django.utils.encoding import force_text
 from .helpers import duplicate_txn_id, check_secret
 from .conf import RECEIVER_EMAIL, POSTBACK_ENDPOINT, SANDBOX_POSTBACK_ENDPOINT
 
@@ -272,11 +273,21 @@ class PayPalStandardBase(Model):
         return self.txn_type == "recurring_payment_profile_cancel"
 
     def set_flag(self, info, code=None):
-        """Sets a flag on the transaction and also sets a reason."""
+        """Mark the IPN as flagged and append a unicode-friendly reason."""
         self.flag = True
-        self.flag_info += info
         if code is not None:
             self.flag_code = code
+        if info is None:
+            return
+
+        info_text = force_text(
+            info, encoding=self.charset or 'utf-8', errors='replace')
+        existing = force_text(self.flag_info or u'', errors='ignore')
+
+        if existing:
+            existing = u"%s\n" % existing
+
+        self.flag_info = existing + info_text
 
     def verify(self, item_check_callable=None):
         """
