@@ -13,4 +13,5 @@ class PayPalIPNForm(PayPalStandardBaseForm):
     """
     class Meta:
         model = PayPalIPN
+        exclude = tuple()
 
